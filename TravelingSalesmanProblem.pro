@@ -9,7 +9,10 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    aco.cpp \
+    aco_type.cpp \
     annealing.cpp \
+    ant.cpp \
     main.cpp \
     dialog.cpp \
     point.cpp \
@@ -19,6 +22,7 @@ SOURCES += \
     tsp_solution.cpp
 
 HEADERS += \
+    aco.h \
     annealing.h \
     dialog.h \
     random.h \

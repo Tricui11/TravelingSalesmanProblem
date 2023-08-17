@@ -67,7 +67,7 @@ int sq(int x)
     return(x * x);
 }
 
-double distance(tsp_solution* s, int x, int y, tsp_instance* t)
+double TSP_helper::distance(tsp_solution* s, int x, int y, tsp_instance* t)
 {
     int i, j;
     i = x;
