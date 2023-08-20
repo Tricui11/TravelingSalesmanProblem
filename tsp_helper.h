@@ -8,8 +8,6 @@ class TSP_helper
 {
 public:
     
-    static void read_tsp(tsp_instance* t);
-
     static double distance(tsp_solution* s, int x, int y, tsp_instance* t);
 
     static double solution_cost(tsp_solution* s, tsp_instance* t);

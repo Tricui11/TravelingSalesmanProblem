@@ -135,11 +135,6 @@ void anneal(tsp_instance *t, tsp_solution *s)
             {    
                 //ACCEPT-WIN
                 current_value += delta;
-
-                if (TRACE_OUTPUT)
-                {
-                    printf("swap WIN %d--%d value %f  temp=%f i=%d j=%d\n", i1, i2, current_value, temperature, i, j);
-                }
             }
             else
             { 
@@ -147,10 +142,6 @@ void anneal(tsp_instance *t, tsp_solution *s)
                 {   
                     //ACCEPT-LOSS
                     current_value += delta;
-                    if (TRACE_OUTPUT)
-                    {
-                        printf("swap LOSS %d--%d value %f merit=%f flip=%f i=%d j=%d\n", i1, i2, current_value, merit, flip, i, j);
-                    }
                 }
                 else
                 {   
@@ -164,10 +155,6 @@ void anneal(tsp_instance *t, tsp_solution *s)
         {
             //rerun at this temp
             temperature /= COOLING_FRACTION;
-            if (TRACE_OUTPUT)
-            {
-                printf("rerun at temperature %f\n", temperature);
-            }
         }
     }
 }

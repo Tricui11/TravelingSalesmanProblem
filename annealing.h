@@ -5,10 +5,7 @@
 #include "tsp_instance.cpp"
 #include "tsp_solution.cpp"
 
-#define TRACE_OUTPUT false
 #define PRINT_FREQUENCY 10000
-#define ERROR "ERROR"
-#define ERROR_VALUE	0.0
 
 //Simulated Annealing Constants
 #define REPEAT_COUNT 1
