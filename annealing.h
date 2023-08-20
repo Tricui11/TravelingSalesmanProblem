@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <dialog.h>
 #include "tsp_instance.cpp"
 #include "tsp_solution.cpp"
 
@@ -17,8 +18,8 @@
 #define STEPS_PER_TEMP 1000
 #define K 0.01 //Boltzman's constant
 
-void random_sampling(tsp_instance* t, int nsamples, tsp_solution* bestsol);
+void random_sampling(tsp_instance* t, int nsamples, tsp_solution* bestsol, Dialog* Dialog);
 
-void repeated_hill_climbing(tsp_instance* t, int nsamples, tsp_solution* bestsol);
+void repeated_hill_climbing(tsp_instance* t, int nsamples, tsp_solution* bestsol, Dialog* Dialog);
 
-void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *bestsol);
+void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialog* Dialog);

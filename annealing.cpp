@@ -3,9 +3,12 @@
 #include "random.h"
 #include <cmath>
 #include "tsp_helper.h"
+#include <dialog.h>
+#include <QCoreApplication>
 
 int solution_count;
-double e = std::exp(1.0);
+double e = exp(1.0);
+Dialog* dialog;
 
 void solution_count_update(tsp_solution *s, tsp_instance *t)
 {
@@ -13,11 +16,14 @@ void solution_count_update(tsp_solution *s, tsp_instance *t)
     if ((solution_count % PRINT_FREQUENCY) == 0)
     {
         printf("%d %7.1f\n", solution_count, TSP_helper::solution_cost(s, t));
+        dialog->drawSolution(t, s);
+        QCoreApplication::processEvents();
     }
 }
 
-void random_sampling(tsp_instance *t, int nsamples, tsp_solution *bestsol)
+void random_sampling(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialog* inDialog)
 {
+    dialog = inDialog;
     tsp_solution s;
     double best_cost, curr_cost;
 
@@ -70,8 +76,9 @@ void hill_climbing(tsp_instance *t, tsp_solution *s)
     while(isGetBetterSol);
 }
 
-void repeated_hill_climbing(tsp_instance *t, int nsamples, tsp_solution *bestsol)
+void repeated_hill_climbing(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialog* inDialog)
 {
+    dialog = inDialog;
     tsp_solution s;
 
     TSP_helper::initialize_solution(t->n, &s);
@@ -165,8 +172,9 @@ void anneal(tsp_instance *t, tsp_solution *s)
     }
 }
 
-void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *bestsol)
+void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialog* inDialog)
 {
+    dialog = inDialog;
     tsp_solution s;
 
     TSP_helper::initialize_solution(t->n, &s);
