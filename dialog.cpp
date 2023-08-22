@@ -1,18 +1,19 @@
 #include <dialog.h>
 #include <ui_dialog.h>
 #include <QFileDialog>
+#include <QVBoxLayout>
+#include <QtWidgets/QGraphicsView>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QLineEdit>
+#include <QTextStream>
 #include <stdio.h>
 #include <string.h>
 #include <annealing.h>
 #include <random.h>
 #include <tsp_helper.h>
-#include <QVBoxLayout>
-#include <QtWidgets/QGraphicsView>
 #include <numbered_text_item.cpp>
-#include <QFileDialog>
-#include <QMessageBox>
 #include <fstream>
-#include <QLineEdit>
 
 Dialog::Dialog(QWidget *parent)
     : QDialog(parent)
