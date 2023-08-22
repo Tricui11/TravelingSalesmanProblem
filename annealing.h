@@ -2,18 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dialog.h>
-#include "tsp_instance.cpp"
-#include "tsp_solution.cpp"
+#include <tsp_instance.cpp>
+#include <tsp_solution.cpp>
 
 #define PRINT_FREQUENCY 10000
 
-//Simulated Annealing Constants
-#define REPEAT_COUNT 1
-#define	INITIAL_TEMPERATURE	1
-#define COOLING_STEPS 500	//change in pair with the COOLING_FRACTION
-#define COOLING_FRACTION 0.97 //higher to improve quality
-#define STEPS_PER_TEMP 1000
-#define K 0.01 //Boltzman's constant
+inline int repeatCount;
+inline double initialTemperature;
+inline int coolingSteps;	//change in pair with the COOLING_FRACTION
+inline double coolingFraction; //higher to improve quality
+inline int stepsPerTemp;
+inline double K; //Boltzman's constant
 
 void random_sampling(tsp_instance* t, int nsamples, tsp_solution* bestsol, Dialog* Dialog);
 

@@ -1,5 +1,5 @@
-#include "tsp_helper.h"
-#include "random.h"
+#include <tsp_helper.h>
+#include <random.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -10,9 +10,7 @@ int sq(int x)
 
 double TSP_helper::distance(tsp_solution* s, int x, int y, tsp_instance* t)
 {
-    int i, j;
-    i = x;
-    j = y;
+    int i = x, j = y;
     if (i == t->n + 1)
     {
         i = 1;
@@ -58,74 +56,6 @@ void TSP_helper::copy_solution(tsp_solution* s, tsp_solution* t)
     {
         t->p[i] = s->p[i];
     }
-}
-
-void TSP_helper::print_solution(tsp_solution* s)
-{
-    for (int i = 1; i <= (s->n); i++)
-    {
-        printf(" %d", s->p[i]);
-    }
-    printf("\n------------------------------------------------------\n");
-}
-
-void TSP_helper::read_solution(tsp_solution* s)
-{
-    //scanf_s("%d\n", &(s->n));
-
-    //for (i = 1; i <= (s->n); i++) {
-    //    scanf_s("%d", &(s->p[i]));
-    //}
-
-    s->n = 48;
-    s->p[1] = 1;
-    s->p[2] = 8;
-    s->p[3] = 38;
-    s->p[4] = 31;
-    s->p[5] = 44;
-    s->p[6] = 18;
-    s->p[7] = 7;
-    s->p[8] = 28;
-    s->p[9] = 6;
-    s->p[10] = 37;
-    s->p[11] = 19;
-    s->p[12] = 27;
-    s->p[13] = 17;
-    s->p[14] = 43;
-    s->p[15] = 30;
-    s->p[16] = 36;
-    s->p[17] = 46;
-    s->p[18] = 33;
-    s->p[19] = 20;
-    s->p[20] = 47;
-    s->p[21] = 21;
-    s->p[22] = 32;
-    s->p[23] = 39;
-    s->p[24] = 48;
-    s->p[25] = 5;
-    s->p[26] = 42;
-    s->p[27] = 24;
-    s->p[28] = 10;
-    s->p[29] = 45;
-    s->p[30] = 35;
-    s->p[31] = 4;
-    s->p[32] = 26;
-    s->p[33] = 2;
-    s->p[34] = 29;
-    s->p[35] = 34;
-    s->p[36] = 41;
-    s->p[37] = 16;
-    s->p[38] = 22;
-    s->p[39] = 3;
-    s->p[40] = 23;
-    s->p[41] = 14;
-    s->p[42] = 25;
-    s->p[43] = 13;
-    s->p[44] = 11;
-    s->p[45] = 12;
-    s->p[46] = 15;
-    s->p[47] = 40;
-    s->p[48] = 9;
 }
 
 void TSP_helper::random_solution(tsp_solution* s)

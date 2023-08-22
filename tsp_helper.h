@@ -1,5 +1,5 @@
-#include "tsp_instance.cpp"
-#include "tsp_solution.cpp"
+#include <tsp_instance.cpp>
+#include <tsp_solution.cpp>
 
 #ifndef TSP_HELPER
 #define TSP_HELPER
@@ -15,10 +15,6 @@ public:
     static void initialize_solution(int n, tsp_solution* s);
 
     static void copy_solution(tsp_solution* s, tsp_solution* t);
-
-    static void print_solution(tsp_solution* s);
-
-    static void read_solution(tsp_solution* s);
 
     static void random_solution(tsp_solution* s);
 

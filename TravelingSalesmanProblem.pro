@@ -12,6 +12,7 @@ SOURCES += \
     annealing.cpp \
     main.cpp \
     dialog.cpp \
+    marquee_line_edit.cpp \
     numbered_text_item.cpp \
     point.cpp \
     random.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 HEADERS += \
     annealing.h \
     dialog.h \
+    marquee_line_edit.h \
     random.h \
     tsp_helper.h
 

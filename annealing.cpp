@@ -1,8 +1,8 @@
+#include <annealing.h>
 #include <stdio.h>
-#include "annealing.h"
-#include "random.h"
+#include <random.h>
 #include <cmath>
-#include "tsp_helper.h"
+#include <tsp_helper.h>
 #include <dialog.h>
 #include <QCoreApplication>
 
@@ -15,7 +15,6 @@ void solution_count_update(tsp_solution *s, tsp_instance *t)
     solution_count++;
     if ((solution_count % PRINT_FREQUENCY) == 0)
     {
-        printf("%d %7.1f\n", solution_count, TSP_helper::solution_cost(s, t));
         dialog->drawSolution(t, s);
         QCoreApplication::processEvents();
     }
@@ -39,6 +38,7 @@ void random_sampling(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialo
         if (curr_cost < best_cost)
         {
             best_cost = curr_cost;
+            dialog->resCostLineEdit->setText(QString::number(curr_cost));
             TSP_helper::copy_solution(&s, bestsol);
         }
 
@@ -93,6 +93,7 @@ void repeated_hill_climbing(tsp_instance *t, int nsamples, tsp_solution *bestsol
         if (curr_cost < best_cost)
         {
             best_cost = curr_cost;
+            dialog->resCostLineEdit->setText(QString::number(curr_cost));
             TSP_helper::copy_solution(&s, bestsol);
         }
     }
@@ -110,17 +111,17 @@ void anneal(tsp_instance *t, tsp_solution *s)
     double merit, flip; //hold swap accept conditions
     double exponent; //exponent for energy funct
 
-    double temperature = INITIAL_TEMPERATURE;
+    double temperature = initialTemperature;
     TSP_helper::initialize_solution(t->n, s);
     double current_value = TSP_helper::solution_cost(s, t);
 
-    for (int i = 1; i <= COOLING_STEPS; i++)
+    for (int i = 1; i <= coolingSteps; i++)
     {
-        temperature *= COOLING_FRACTION;
+        temperature *= coolingFraction;
 
         start_value = current_value;		
 
-        for (int j = 1; j <= STEPS_PER_TEMP; j++)
+        for (int j = 1; j <= stepsPerTemp; j++)
         {
             i1 = random_int(1, t->n);
             i2 = random_int(1, t->n);
@@ -154,7 +155,7 @@ void anneal(tsp_instance *t, tsp_solution *s)
         if ((current_value-start_value) < 0.0)
         {
             //rerun at this temp
-            temperature /= COOLING_FRACTION;
+            temperature /= coolingFraction;
         }
     }
 }
@@ -176,6 +177,7 @@ void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *bestsol, Di
         if (curr_cost < best_cost)
         {
             best_cost = curr_cost;
+            dialog->resCostLineEdit->setText(QString::number(curr_cost));
             TSP_helper::copy_solution(&s, bestsol);
         }
     }

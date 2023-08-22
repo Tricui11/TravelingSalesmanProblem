@@ -1,7 +1,7 @@
 #ifndef TSP_INSTANCE_H
 #define TSP_INSTANCE_H
 
-#include "point.cpp"
+#include <point.cpp>
 
 typedef struct
 {

@@ -13,77 +13,162 @@
 #include <QMessageBox>
 #include <fstream>
 #include <QLineEdit>
-#include <QLabel>
 
 Dialog::Dialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
-    , scaleFactor(0.1/1.15)
 {
     ui->setupUi(this);
 
     scene = new QGraphicsScene(this);
     view = new QGraphicsView(scene, this);
     view->setTransform(QTransform::fromScale(scaleFactor, scaleFactor));
+    QBrush backgroundBrush(QColor::fromRgb(255, 255, 204));
+    view->setBackgroundBrush(backgroundBrush);
 
     calcButton = new QPushButton("Calculate", this);
+    calcButton->setStyleSheet("background-color: red; color: white;");
+    calcButton->setFixedWidth(250);
+    QFont font = calcButton->font();
+    font.setPointSize(14);
+    font.setBold(true);
+    calcButton->setFont(font);
     loadFromFileButton = new QPushButton("Load from File", this);
+    loadFromFileButton->setFixedWidth(150);
     zoomInButton = new QPushButton("Zoom In", this);
     zoomOutButton = new QPushButton("Zoom Out", this);
 
+    QHBoxLayout* firstRowLayout = new QHBoxLayout();
+    QLabel* repeatCountLabel = new QLabel("Repeat count: ", this);
+    QFont labelFont = setStyleSheetForQLabel(repeatCountLabel, 10, false);
     repeatCountSpinBox = new QSpinBox(this);
-    initialTemperatureSpinBox = new QDoubleSpinBox(this);
-    coolingStepsSpinBox = new QSpinBox(this);
-    coolingFractionSpinBox = new QDoubleSpinBox(this);
-    stepsPerTempSpinBox = new QSpinBox(this);
-    kSpinBox = new QDoubleSpinBox(this);
     repeatCountSpinBox->setMinimum(1);
-    initialTemperatureSpinBox->setMinimum(0.0);
+    repeatCountSpinBox->setValue(1);
+    QLabel* coolingStepsLabel = new QLabel("Cooling steps: ", this);
+    coolingStepsLabel->setAlignment(Qt::AlignRight);
+    coolingStepsLabel->setFont(labelFont);
+    coolingStepsSpinBox = new QSpinBox(this);
     coolingStepsSpinBox->setMinimum(1);
+    coolingStepsSpinBox->setMaximum(5000);
+    coolingStepsSpinBox->setValue(500);
+    QLabel* coolingFractionLabel = new QLabel("Cooling fraction: ", this);
+    coolingFractionLabel->setAlignment(Qt::AlignRight);
+    coolingFractionLabel->setFont(labelFont);
+    coolingFractionSpinBox = new QDoubleSpinBox(this);
     coolingFractionSpinBox->setMinimum(0.0);
+    coolingFractionSpinBox->setValue(0.97);
+    firstRowLayout->addWidget(repeatCountLabel);
+    firstRowLayout->addWidget(repeatCountSpinBox);
+    firstRowLayout->addWidget(coolingStepsLabel);
+    firstRowLayout->addWidget(coolingStepsSpinBox);
+    firstRowLayout->addWidget(coolingFractionLabel);
+    firstRowLayout->addWidget(coolingFractionSpinBox);
+
+    QHBoxLayout* secondRowLayout = new QHBoxLayout();
+    QLabel* initialTemperatureLabel = new QLabel("Initial temperature: ", this);
+    initialTemperatureLabel->setAlignment(Qt::AlignRight);
+    initialTemperatureLabel->setFont(labelFont);
+    initialTemperatureSpinBox = new QDoubleSpinBox(this);
+    initialTemperatureSpinBox->setMinimum(0.0);
+    initialTemperatureSpinBox->setMaximum(100.0);
+    initialTemperatureSpinBox->setValue(1);
+    QLabel* stepsPerTempLabel = new QLabel("Steps per temp: ", this);
+    stepsPerTempLabel->setAlignment(Qt::AlignRight);
+    stepsPerTempLabel->setFont(labelFont);
+    stepsPerTempSpinBox = new QSpinBox(this);
     stepsPerTempSpinBox->setMinimum(1);
+    stepsPerTempSpinBox->setMaximum(10000);
+    stepsPerTempSpinBox->setValue(1000);
+    QLabel* kLabel = new QLabel("K: ", this);
+    kLabel->setAlignment(Qt::AlignRight);
+    kLabel->setFont(labelFont);
+    kSpinBox = new QDoubleSpinBox(this);
     kSpinBox->setMinimum(0.0);
+    kSpinBox->setValue(0.01);
+    secondRowLayout->addWidget(initialTemperatureLabel);
+    secondRowLayout->addWidget(initialTemperatureSpinBox);
+    secondRowLayout->addWidget(stepsPerTempLabel);
+    secondRowLayout->addWidget(stepsPerTempSpinBox);
+    secondRowLayout->addWidget(kLabel);
+    secondRowLayout->addWidget(kSpinBox);
 
-    QHBoxLayout* optimalDistanceLayout = new QHBoxLayout();
-    QLabel* optimalDistanceLabel = new QLabel("Optimal = ", this);
-    optimalDistanceLineEdit = new QLineEdit(this);
-    optimalDistanceLayout->addWidget(optimalDistanceLabel);
-    optimalDistanceLayout->addWidget(optimalDistanceLineEdit);
+    QHBoxLayout* thirdRowLayout = new QHBoxLayout();
+    QLabel* randomSamplingLabel = new QLabel("Random sampling count: ", this);
+    randomSamplingLabel->setAlignment(Qt::AlignRight);
+    randomSamplingLabel->setFont(labelFont);
+    randomSamplingSpinBox = new QSpinBox(this);
+    randomSamplingSpinBox->setMinimum(0);
+    randomSamplingSpinBox->setMaximum(1500000);
+    randomSamplingSpinBox->setValue(150000);
+    QLabel* hillClimbingLabel = new QLabel("Hill climbing count: ", this);
+    hillClimbingLabel->setAlignment(Qt::AlignRight);
+    hillClimbingLabel->setFont(labelFont);
+    hillClimbingSpinBox = new QSpinBox(this);
+    hillClimbingSpinBox->setMinimum(0);
+    hillClimbingSpinBox->setMaximum(1000);
+    hillClimbingSpinBox->setValue(200);
+    QLabel* annealingLabel = new QLabel("Annealing count: ", this);
+    annealingLabel->setAlignment(Qt::AlignRight);
+    annealingLabel->setFont(labelFont);
+    annealingSpinBox = new QSpinBox(this);
+    annealingSpinBox->setMinimum(0);
+    annealingSpinBox->setValue(10);
+    thirdRowLayout->addWidget(randomSamplingLabel);
+    thirdRowLayout->addWidget(randomSamplingSpinBox);
+    thirdRowLayout->addWidget(hillClimbingLabel);
+    thirdRowLayout->addWidget(hillClimbingSpinBox);
+    thirdRowLayout->addWidget(annealingLabel);
+    thirdRowLayout->addWidget(annealingSpinBox);
 
-    QHBoxLayout* resDistanceLayout = new QHBoxLayout();
-    QLabel* resDistanceLabel = new QLabel("Result = ", this);
-    resDistanceLineEdit = new QLineEdit(this);
-    resDistanceLayout->addWidget(resDistanceLabel);
-    resDistanceLayout->addWidget(resDistanceLineEdit);
+    QHBoxLayout* costLayout = new QHBoxLayout();
+    QLabel* optimalCostLabel = new QLabel("Optimal = ", this);
+    optimalCostLabel->setAlignment(Qt::AlignRight);
+    optimalCostLabel->setFont(labelFont);
+    optimalCostLabel->setStyleSheet("color: red;");
+    optimalCostLineEdit = new QLineEdit(this);
+    optimalCostLineEdit->setStyleSheet("color: red;");
+    resCostLabel = new QLabel("Current = ", this);
+    resCostLabel->setAlignment(Qt::AlignRight);
+    resCostLabel->setFont(labelFont);
+    resCostLabel->setStyleSheet("color: green;");
+    resCostLineEdit = new QLineEdit(this);
+    resCostLineEdit->setStyleSheet("color: green;");
+    costLayout->addWidget(optimalCostLabel);
+    costLayout->addWidget(optimalCostLineEdit);
+    costLayout->addWidget(resCostLabel);
+    costLayout->addWidget(resCostLineEdit);
 
     QHBoxLayout* pathLayout = new QHBoxLayout();
     QLabel* pathLabel = new QLabel("Path: ", this);
-    pathLineEdit = new QLineEdit(this);
+    pathLabel->setAlignment(Qt::AlignRight);
+    pathLabel->setFont(labelFont);
+    pathLabel->setStyleSheet("color: green;");
+    pathLineEdit = new MarqueeLineEdit(this);
+    pathLineEdit->setStyleSheet("color: green;");
     pathLayout->addWidget(pathLabel);
     pathLayout->addWidget(pathLineEdit);
 
+    QHBoxLayout* zoomLayout = new QHBoxLayout();
+    zoomLayout->addWidget(zoomInButton);
+    zoomLayout->addWidget(zoomOutButton);
+
     QVBoxLayout* layout = new QVBoxLayout();
-    layout->addWidget(repeatCountSpinBox);
-    layout->addWidget(initialTemperatureSpinBox);
-    layout->addWidget(coolingStepsSpinBox);
-    layout->addWidget(coolingFractionSpinBox);
-    layout->addWidget(stepsPerTempSpinBox);
-    layout->addWidget(kSpinBox);
-    layout->addLayout(optimalDistanceLayout);
+    layout->addLayout(firstRowLayout);
+    layout->addLayout(secondRowLayout);
+    layout->addLayout(thirdRowLayout);
     layout->addWidget(view);
-    layout->addWidget(calcButton);
-    layout->addWidget(loadFromFileButton);
-    layout->addWidget(zoomInButton);
-    layout->addWidget(zoomOutButton);
-    layout->addLayout(resDistanceLayout);
+    layout->addWidget(loadFromFileButton, 0, Qt::AlignCenter);
+    layout->addWidget(calcButton, 0, Qt::AlignCenter);
+    layout->addLayout(zoomLayout);
+    layout->addLayout(costLayout);
     layout->addLayout(pathLayout);
 
     setLayout(layout);
 
     connect(calcButton, &QPushButton::clicked, this, &Dialog::on_calcButton_clicked);
     connect(loadFromFileButton, &QPushButton::clicked, this, &Dialog::on_loadFromFileButton_clicked);
-    connect(zoomInButton, &QPushButton::clicked, this, &Dialog::zoomIn);
-    connect(zoomOutButton, &QPushButton::clicked, this, &Dialog::zoomOut);
+    connect(zoomInButton, &QPushButton::clicked, this, &Dialog::on_zoomIn_clicked);
+    connect(zoomOutButton, &QPushButton::clicked, this, &Dialog::on_zoomOut_clicked);
 }
 
 Dialog::~Dialog()
@@ -108,7 +193,7 @@ void Dialog::on_loadFromFileButton_clicked()
 
         QString firstLine = in.readLine();
         QString optimalSolution = firstLine.split(" ").last();
-        optimalDistanceLineEdit->setText(optimalSolution);
+        optimalCostLineEdit->setText(optimalSolution);
 
         t.n = 0;
         while (!in.atEnd())
@@ -140,19 +225,29 @@ void Dialog::on_loadFromFileButton_clicked()
 
 void Dialog::on_calcButton_clicked()
 {
-    extern int solution_count;
+    QLocale locale;
+    repeatCount = repeatCountSpinBox->text().toInt();
+    initialTemperature = locale.toDouble(initialTemperatureSpinBox->text());
+    coolingSteps = coolingStepsSpinBox->text().toInt();
+    coolingFraction = locale.toDouble(coolingFractionSpinBox->text());
+    stepsPerTemp = stepsPerTempSpinBox->text().toInt();
+    K = locale.toDouble(kSpinBox->text());
 
     srand(time(NULL));
 
+    resCostLabel->setText("Current = ");
     pathLineEdit->setText("");
-    resDistanceLineEdit->setText("");
+    resCostLineEdit->setText("");
     TSP_helper::initialize_solution(t.n, &s);
 
-    random_sampling(&t, 150000, &s, this);
+    int randomSamplingCount = randomSamplingSpinBox->text().toInt();
+    random_sampling(&t, randomSamplingCount, &s, this);
 
-    repeated_hill_climbing(&t, 200, &s, this);
+    int hillClimbingCount = hillClimbingSpinBox->text().toInt();
+    repeated_hill_climbing(&t, hillClimbingCount, &s, this);
 
-    repeated_annealing(&t, 10, &s, this);
+    int annealingCount = annealingSpinBox->text().toInt();
+    repeated_annealing(&t, annealingCount, &s, this);
 
     drawSolution(&t, &s);
     setResults();
@@ -162,13 +257,13 @@ void Dialog::drawVertices(tsp_instance* t)
 {
     for (int i = 1; i <= t->n; i++)
     {
-        QGraphicsEllipseItem* pointItem = new QGraphicsEllipseItem(t->p[i].x - 30, t->p[i].y - 30, 60, 60);
+        QGraphicsEllipseItem* pointItem = new QGraphicsEllipseItem(t->p[i].x - vertextRadius, t->p[i].y - vertextRadius, 2*vertextRadius, 2*vertextRadius);
         pointItem->setBrush(Qt::red);
         scene->addItem(pointItem);
 
         QGraphicsTextItem* textItem = new QGraphicsTextItem(QString::number(i));
         QFont font = textItem->font();
-        font.setPointSize(120);
+        font.setPointSize(pointSize);
         textItem->setFont(font);
         textItem->setPos(t->p[i].x + 5, t->p[i].y - 15);
         scene->addItem(textItem);
@@ -185,8 +280,9 @@ void Dialog::setResults()
     }
     pathLineEdit->setText(path);
 
+    resCostLabel->setText("Result = ");
     double resCost = TSP_helper::solution_cost(&s,&t);
-    resDistanceLineEdit->setText(QString::number(resCost));
+    resCostLineEdit->setText(QString::number(resCost));
 }
 
 void Dialog::drawSolution(tsp_instance* t, tsp_solution* s)
@@ -196,7 +292,7 @@ void Dialog::drawSolution(tsp_instance* t, tsp_solution* s)
     drawVertices(t);
 
     QPen pen;
-    pen.setWidth(10);
+    pen.setWidth(edgeThickness);
     pen.setColor(Qt::black);
     for (int i = 2; i <= s->n; i++)
     {
@@ -209,14 +305,29 @@ void Dialog::drawSolution(tsp_instance* t, tsp_solution* s)
     scene->addLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, pen);
 }
 
-void Dialog::zoomIn()
+void Dialog::on_zoomIn_clicked()
 {
-    scaleFactor *= 1.2;
+    scaleFactor *= drawCoeff;
+    vertextRadius /= drawCoeff;
+    edgeThickness /= drawCoeff;
     view->setTransform(QTransform::fromScale(scaleFactor, scaleFactor));
 }
 
-void Dialog::zoomOut()
+void Dialog::on_zoomOut_clicked()
 {
-    scaleFactor /= 1.2;
+    scaleFactor /= drawCoeff;
+    vertextRadius *= drawCoeff;
+    edgeThickness *= drawCoeff;
     view->setTransform(QTransform::fromScale(scaleFactor, scaleFactor));
+}
+
+QFont Dialog::setStyleSheetForQLabel(QLabel *label, int fontSize, bool isItalic)
+{
+    label->setAlignment(Qt::AlignRight);
+    QFont font = label->font();
+    font.setPointSize(fontSize);
+    font.setBold(true);
+    font.setItalic(isItalic);
+    label->setFont(font);
+    return font;
 }

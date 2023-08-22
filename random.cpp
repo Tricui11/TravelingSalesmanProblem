@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "random.h"
+#include <random.h>
 
 void swap(int *a, int *b)
 {
