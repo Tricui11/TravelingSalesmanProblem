@@ -41,7 +41,6 @@ private:
     QPushButton* loadFromFileButton;
     QPushButton* zoomInButton;
     QPushButton* zoomOutButton;    
-    QSpinBox* repeatCountSpinBox;
     QDoubleSpinBox* initialTemperatureSpinBox;
     QSpinBox* coolingStepsSpinBox;
     QDoubleSpinBox* coolingFractionSpinBox;

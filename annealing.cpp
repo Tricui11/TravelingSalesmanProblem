@@ -6,6 +6,7 @@
 #include <dialog.h>
 #include <QCoreApplication>
 
+tsp_solution bestSolution;
 int solution_count;
 double e = exp(1.0);
 Dialog* dialog;
@@ -13,42 +14,38 @@ Dialog* dialog;
 void solution_count_update(tsp_solution *s, tsp_instance *t)
 {
     solution_count++;
-    if ((solution_count % PRINT_FREQUENCY) == 0)
+    if (solution_count % PRINT_FREQUENCY == 0)
     {
         dialog->drawSolution(t, s);
         QCoreApplication::processEvents();
     }
 }
 
-void random_sampling(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialog* inDialog)
+void random_sampling(tsp_instance *t, int nsamples, tsp_solution *s, Dialog* inDialog)
 {
     dialog = inDialog;
-    tsp_solution s;
-    double best_cost, curr_cost;
 
-    TSP_helper::initialize_solution(t->n, &s);
-    best_cost = TSP_helper::solution_cost(&s, t);
-    TSP_helper::copy_solution(&s, bestsol);
-
+    TSP_helper::initialize_solution(t->n,s);
+    double best_cost = TSP_helper::solution_cost(s, t), curr_cost;
     for (int i = 1; i <= nsamples; i++)
     {
-        TSP_helper::random_solution(&s);
-        curr_cost = TSP_helper::solution_cost(&s, t);
+        TSP_helper::random_solution(s);
+        curr_cost = TSP_helper::solution_cost(s, t);
 
         if (curr_cost < best_cost)
         {
             best_cost = curr_cost;
             dialog->resCostLineEdit->setText(QString::number(curr_cost));
-            TSP_helper::copy_solution(&s, bestsol);
+            TSP_helper::copy_solution(s, &bestSolution);
         }
 
-        solution_count_update(&s, t);
+        solution_count_update(s, t);
     }
 }
 
 void hill_climbing(tsp_instance *t, tsp_solution *s)
 {
-    TSP_helper::initialize_solution(t->n, s);
+    TSP_helper::initialize_solution(t->n,s);
     TSP_helper::random_solution(s);
 
     double delta;
@@ -76,25 +73,20 @@ void hill_climbing(tsp_instance *t, tsp_solution *s)
     while(isGetBetterSol);
 }
 
-void repeated_hill_climbing(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialog* inDialog)
+void repeated_hill_climbing(tsp_instance *t, int nsamples, tsp_solution *s, Dialog* inDialog)
 {
     dialog = inDialog;
-    tsp_solution s;
 
-    TSP_helper::initialize_solution(t->n, &s);
-    double best_cost = TSP_helper::solution_cost(&s, t);
-    TSP_helper::copy_solution(&s, bestsol);
-
-    double curr_cost;
+    double best_cost = TSP_helper::solution_cost(s, t), curr_cost;
     for (int i = 1; i <= nsamples; i++)
     {
-        hill_climbing(t, &s);
-        curr_cost = TSP_helper::solution_cost(&s, t);
+        hill_climbing(t, s);
+        curr_cost = TSP_helper::solution_cost(s, t);
         if (curr_cost < best_cost)
         {
             best_cost = curr_cost;
             dialog->resCostLineEdit->setText(QString::number(curr_cost));
-            TSP_helper::copy_solution(&s, bestsol);
+            TSP_helper::copy_solution(s, &bestSolution);
         }
     }
 }
@@ -112,7 +104,6 @@ void anneal(tsp_instance *t, tsp_solution *s)
     double exponent; //exponent for energy funct
 
     double temperature = initialTemperature;
-    TSP_helper::initialize_solution(t->n, s);
     double current_value = TSP_helper::solution_cost(s, t);
 
     for (int i = 1; i <= coolingSteps; i++)
@@ -160,25 +151,22 @@ void anneal(tsp_instance *t, tsp_solution *s)
     }
 }
 
-void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialog* inDialog)
+void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *s, Dialog* inDialog)
 {
     dialog = inDialog;
-    tsp_solution s;
 
-    TSP_helper::initialize_solution(t->n, &s);
-    double best_cost = TSP_helper::solution_cost(&s, t);
-    TSP_helper::copy_solution(&s, bestsol);
-
-    double curr_cost;
+    TSP_helper::copy_solution(&bestSolution, s);
+    double best_cost = TSP_helper::solution_cost(s, t), curr_cost;
     for (int i = 1; i <= nsamples; i++)
     {
-        anneal(t, &s);
-        curr_cost = TSP_helper::solution_cost(&s, t);
+        anneal(t, s);
+        curr_cost = TSP_helper::solution_cost(s, t);
         if (curr_cost < best_cost)
         {
             best_cost = curr_cost;
             dialog->resCostLineEdit->setText(QString::number(curr_cost));
-            TSP_helper::copy_solution(&s, bestsol);
+            TSP_helper::copy_solution(s, &bestSolution);
         }
     }
+    TSP_helper::copy_solution(&bestSolution, s);
 }

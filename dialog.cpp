@@ -40,14 +40,9 @@ Dialog::Dialog(QWidget *parent)
     zoomOutButton = new QPushButton("Zoom Out", this);
 
     QHBoxLayout* firstRowLayout = new QHBoxLayout();
-    QLabel* repeatCountLabel = new QLabel("Repeat count: ", this);
-    QFont labelFont = setStyleSheetForQLabel(repeatCountLabel, 10, false);
-    repeatCountSpinBox = new QSpinBox(this);
-    repeatCountSpinBox->setMinimum(1);
-    repeatCountSpinBox->setValue(1);
     QLabel* coolingStepsLabel = new QLabel("Cooling steps: ", this);
     coolingStepsLabel->setAlignment(Qt::AlignRight);
-    coolingStepsLabel->setFont(labelFont);
+    QFont labelFont = setStyleSheetForQLabel(coolingStepsLabel, 10, false);
     coolingStepsSpinBox = new QSpinBox(this);
     coolingStepsSpinBox->setMinimum(1);
     coolingStepsSpinBox->setMaximum(5000);
@@ -58,8 +53,6 @@ Dialog::Dialog(QWidget *parent)
     coolingFractionSpinBox = new QDoubleSpinBox(this);
     coolingFractionSpinBox->setMinimum(0.0);
     coolingFractionSpinBox->setValue(0.97);
-    firstRowLayout->addWidget(repeatCountLabel);
-    firstRowLayout->addWidget(repeatCountSpinBox);
     firstRowLayout->addWidget(coolingStepsLabel);
     firstRowLayout->addWidget(coolingStepsSpinBox);
     firstRowLayout->addWidget(coolingFractionLabel);
@@ -227,18 +220,16 @@ void Dialog::on_loadFromFileButton_clicked()
 void Dialog::on_calcButton_clicked()
 {
     QLocale locale;
-    repeatCount = repeatCountSpinBox->text().toInt();
     initialTemperature = locale.toDouble(initialTemperatureSpinBox->text());
     coolingSteps = coolingStepsSpinBox->text().toInt();
     coolingFraction = locale.toDouble(coolingFractionSpinBox->text());
     stepsPerTemp = stepsPerTempSpinBox->text().toInt();
     K = locale.toDouble(kSpinBox->text());
-
-    srand(time(NULL));
-
     resCostLabel->setText("Current = ");
     pathLineEdit->setText("");
     resCostLineEdit->setText("");
+
+    srand(time(NULL));
     TSP_helper::initialize_solution(t.n, &s);
 
     int randomSamplingCount = randomSamplingSpinBox->text().toInt();
@@ -282,7 +273,7 @@ void Dialog::setResults()
     pathLineEdit->setText(path);
 
     resCostLabel->setText("Result = ");
-    double resCost = TSP_helper::solution_cost(&s,&t);
+    double resCost = TSP_helper::solution_cost(&s, &t);
     resCostLineEdit->setText(QString::number(resCost));
 }
 

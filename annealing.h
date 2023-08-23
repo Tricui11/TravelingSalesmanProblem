@@ -7,15 +7,14 @@
 
 #define PRINT_FREQUENCY 10000
 
-inline int repeatCount;
 inline double initialTemperature;
 inline int coolingSteps;	//change in pair with the COOLING_FRACTION
 inline double coolingFraction; //higher to improve quality
 inline int stepsPerTemp;
 inline double K; //Boltzman's constant
 
-void random_sampling(tsp_instance* t, int nsamples, tsp_solution* bestsol, Dialog* Dialog);
+void random_sampling(tsp_instance* t, int nsamples, tsp_solution* s, Dialog* Dialog);
 
-void repeated_hill_climbing(tsp_instance* t, int nsamples, tsp_solution* bestsol, Dialog* Dialog);
+void repeated_hill_climbing(tsp_instance* t, int nsamples, tsp_solution* s, Dialog* Dialog);
 
-void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *bestsol, Dialog* Dialog);
+void repeated_annealing(tsp_instance *t, int nsamples, tsp_solution *s, Dialog* Dialog);
